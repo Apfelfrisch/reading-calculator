@@ -35,7 +35,7 @@ class GasCoefficientProfile implements Profile
 
         $sumFactor = 0;
         while ($from->modify('+1 day')->format('Ymd') <= $until->format('Ymd')) {
-            $sumFactor += $this->entries[$from->format('Y-m-d H:i')];
+            $sumFactor += $this->getFactor($from);
         }
 
         return $sumFactor;
@@ -44,5 +44,13 @@ class GasCoefficientProfile implements Profile
     public function yearlyFactor(DateTime $targetDate): float
     {
         return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year + 1 day'), $targetDate);
+    }
+
+    private function getFactor($date): float
+    {
+        if (null !== $factor = $this->entries[$date->format('Y-m-d H:i')] ?? null) {
+            return $factor;
+        }
+        throw new \Exception("No Profile Factor for " . $date->format('Y-m-d H:i'));
     }
 }
