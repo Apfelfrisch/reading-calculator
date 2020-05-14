@@ -46,6 +46,8 @@ class MonthlyProfile implements Profile
 
     public function getPeriodeFactor(DateTime $from, DateTime $until): float
     {
+        $from = clone $from;
+
         $sumFactor = $this->withinMonthFactor($from, (clone $from)->modify('last day of this month'));
 
         while ($from->modify('last day of +1 month') <= $until) {
