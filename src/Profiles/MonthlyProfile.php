@@ -48,22 +48,25 @@ class MonthlyProfile implements Profile
     {
         $from = clone $from;
 
+        $sumFactor = 0;
+
+        // Angebrochener Monatsstart
         $sumFactor = $this->withinMonthFactor($from, (clone $from)->modify('last day of this month'));
 
+        // Volle Zwischenmonate
         while ($from->modify('last day of +1 month') <= $until) {
             $sumFactor += $this->getFactor($from);
         }
 
-        if ($from->format('Ym') <= $until->format('Ym')) {
-            $sumFactor += $this->withinMonthFactor((clone $from)->modify('first day of this month'), $until);
-        }
+        // Angebrochener Monatsschluß
+        $sumFactor += $this->withinMonthFactor($from->modify('last day of -1 month'), $until);
 
         return $sumFactor;
     }
 
     public function yearlyFactor(DateTime $targetDate): float
     {
-        return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year + 1 day'), $targetDate);
+        return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year'), $targetDate);
     }
 
     private function getFactor($date): float
@@ -76,6 +79,6 @@ class MonthlyProfile implements Profile
 
     private function withinMonthFactor($from, $until): float
     {
-        return $this->entries[$from->format($this->keyFormat)] / $from->format('t') * ($from->diff($until)->days + 1);
+        return $this->entries[$from->format($this->keyFormat)] / $from->format('t') * $from->diff($until)->days;
     }
 }

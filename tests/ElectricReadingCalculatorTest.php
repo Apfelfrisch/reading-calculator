@@ -21,23 +21,37 @@ class ElectricReadingCalculatorTest extends TestCase
     {
         $usage = 500;
         $from = new \DateTime('2019-01-01');
-        $until = new \DateTime('2019-03-31');
+        $until = new \DateTime('2019-06-01');
 
         $calculator = new ElectricReadingCalculator;
         $calculator->addProfile('H0', MonthlyProfile::fromArray($this->buildProfiles(), 'm'));
-        $this->assertEquals(2000.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
+        $this->assertEquals(1200.0, round($calculator->getYearlyUsage('H0', $from, $until, $usage), 0));
+
+        $from = new \DateTime('2018-01-01');
+        $until = new \DateTime('2019-01-01');
+
+        $calculator = new ElectricReadingCalculator;
+        $calculator->addProfile('H0', MonthlyProfile::fromArray($this->buildProfiles(), 'm'));
+        $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
+
+        $from = new \DateTime('2018-12-31');
+        $until = new \DateTime('2019-12-31');
+
+        $calculator = new ElectricReadingCalculator;
+        $calculator->addProfile('H0', MonthlyProfile::fromArray($this->buildProfiles(), 'm'));
+        $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
     }
 
     /** @test */
     public function it_calculates_the_yearly_usage_with_a_fallback_profile()
     {
         $usage = 500;
-        $from = new \DateTime('2019-01-01');
-        $until = new \DateTime('2019-03-31');
+        $from = new \DateTime('2018-12-31');
+        $until = new \DateTime('2019-12-31');
 
         $calculator = new ElectricReadingCalculator;
         $calculator->addProfile('FALLBACK', MonthlyProfile::fromArray($this->buildProfiles(), 'm'), $isFallback = true);
-        $this->assertEquals(2000.0, $calculator->getYearlyUsage('UNKNOW', $from, $until, $usage));
+        $this->assertEquals(500.0, $calculator->getYearlyUsage('UNKNOW', $from, $until, $usage));
     }
 
     /** @test */
@@ -53,13 +67,13 @@ class ElectricReadingCalculatorTest extends TestCase
             $usage = $calculator->getPeriodUsage(
                 'H0',
                 new \DateTime("2019-$month-01"),
-                (new \DateTime("2019-$month-01"))->modify('last day of this month'),
+                (new \DateTime("2019-$month-01"))->modify('+1 month'),
                 $yearlyUsage
             );
             $sumUsage += $usage;
         }
 
-        $this->assertEquals((float)$yearlyUsage, $sumUsage);
+        $this->assertEquals((float)$yearlyUsage, round($sumUsage, 3));
     }
 
     private function buildProfiles()
