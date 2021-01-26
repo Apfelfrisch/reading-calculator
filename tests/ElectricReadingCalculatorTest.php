@@ -20,25 +20,22 @@ class ElectricReadingCalculatorTest extends TestCase
     public function it_calculates_the_yearly_usage_with_a_monthly_profile()
     {
         $usage = 500;
+        $calculator = new ElectricReadingCalculator;
+        $calculator->addProfile('H0', MonthlyProfile::fromArray($this->buildProfiles(), 'm'));
+
         $from = new \DateTime('2019-01-01');
         $until = new \DateTime('2019-06-01');
 
-        $calculator = new ElectricReadingCalculator;
-        $calculator->addProfile('H0', MonthlyProfile::fromArray($this->buildProfiles(), 'm'));
         $this->assertEquals(1200.0, round($calculator->getYearlyUsage('H0', $from, $until, $usage), 0));
 
         $from = new \DateTime('2018-01-01');
         $until = new \DateTime('2019-01-01');
 
-        $calculator = new ElectricReadingCalculator;
-        $calculator->addProfile('H0', MonthlyProfile::fromArray($this->buildProfiles(), 'm'));
         $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
 
         $from = new \DateTime('2018-12-31');
         $until = new \DateTime('2019-12-31');
 
-        $calculator = new ElectricReadingCalculator;
-        $calculator->addProfile('H0', MonthlyProfile::fromArray($this->buildProfiles(), 'm'));
         $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
     }
 

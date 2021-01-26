@@ -16,7 +16,7 @@ class GasReadingCalculatorTest extends TestCase
         $calculator = new GasReadingCalculator;
         $calculator->addProfile('H0', $this->buildProfile($targetDate));
 
-        $this->assertEquals(21411.0, round($calculator->getYearlyUsageFromCustomerValue('H0', $targetDate, $customerValue)));
+        $this->assertEquals(21470.0, round($calculator->getYearlyUsageFromCustomerValue('H0', $targetDate, $customerValue)));
     }
 
     /** @test */
@@ -33,16 +33,27 @@ class GasReadingCalculatorTest extends TestCase
     }
 
     /** @test */
-    public function it_calculates_the_yearly_usage()
+    public function it_calculates_the_yearly_usage_with_a_coefficient_profile()
     {
-        $usage = 6164;
-        $from = new \DateTime('2019-01-01');
-        $until = new \DateTime('2019-03-31');
+        $usage = 500;
 
+        $from = new \DateTime('2019-01-01');
+        $until = new \DateTime('2019-06-01');
         $calculator = new GasReadingCalculator;
         $calculator->addProfile('H0', $this->buildProfile($until));
+        $this->assertEquals(1204.0, round($calculator->getYearlyUsage('H0', $from, $until, $usage)));
 
-        $this->assertEquals(24998.0, round($calculator->getYearlyUsage('H0', $from, $until, $usage)));
+        $from = new \DateTime('2018-01-01');
+        $until = new \DateTime('2019-01-01');
+        $calculator = new GasReadingCalculator;
+        $calculator->addProfile('H0', $this->buildProfile($until));
+        $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
+
+        $from = new \DateTime('2018-12-31');
+        $until = new \DateTime('2019-12-31');
+        $calculator = new GasReadingCalculator;
+        $calculator->addProfile('H0', $this->buildProfile($until));
+        $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
     }
 
     /** @test */
@@ -55,7 +66,7 @@ class GasReadingCalculatorTest extends TestCase
         $calculator = new GasReadingCalculator;
         $calculator->addProfile('H0', $this->buildProfile($until));
 
-        $this->assertEquals(6164.0, round($calculator->getPeriodUsage('H0', $from, $until, $yearlyUsage)));
+        $this->assertEquals(6148.0, round($calculator->getPeriodUsage('H0', $from, $until, $yearlyUsage)));
     }
 
     private function buildProfile($until)

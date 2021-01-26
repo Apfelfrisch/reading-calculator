@@ -43,7 +43,7 @@ class GasCoefficientProfile implements Profile
 
     public function yearlyFactor(DateTime $targetDate): float
     {
-        return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year + 1 day'), $targetDate);
+        return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year'), $targetDate);
     }
 
     private function getFactor($date): float
