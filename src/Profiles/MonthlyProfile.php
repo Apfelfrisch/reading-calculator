@@ -52,7 +52,7 @@ class MonthlyProfile implements Profile
 
     public function addEntry(DateTime $start, float $factor): void
     {
-        $this->entries[(string)$start->format($this->keyFormat)] = $factor;
+        $this->entries[$start->format($this->keyFormat)] = $factor;
     }
 
     public function getPeriodeFactor(DateTime $from, DateTime $until): float
