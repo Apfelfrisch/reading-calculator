@@ -7,16 +7,20 @@ use function Proengeno\ReadingCalculator\sigmoid;
 
 class GasCoefficientProfile implements Profile
 {
-    const C9 = 40;
+    public const C9 = 40;
 
-    protected $coefficients;
+    /** @var array<string, float> */
+    protected array $entries = [];
+
+    /** @psalm-var array{a: float, b: float, c: float, c: float, d: float, v:float} */
+    protected array $coefficients;
 
     public function __construct(float $a, float $b, float $c, float $d, float $v)
     {
         $this->coefficients = compact('a', 'b', 'c', 'd', 'v');
     }
 
-    public function addEntry(DateTime $start, float $temperature)
+    public function addEntry(DateTime $start, float $temperature): void
     {
         $this->entries[$start->format('Y-m-d H:i')] = sigmoid(
             $this->coefficients['a'],
@@ -46,7 +50,7 @@ class GasCoefficientProfile implements Profile
         return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year'), $targetDate);
     }
 
-    private function getFactor($date): float
+    private function getFactor(DateTime $date): float
     {
         if (null !== $factor = $this->entries[$date->format('Y-m-d H:i')] ?? null) {
             return $factor;

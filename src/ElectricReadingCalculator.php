@@ -8,11 +8,11 @@ use Proengeno\ReadingCalculator\Profiles\MonthlyProfile;
 
 class ElectricReadingCalculator extends ReadingCalculator
 {
-    public static function withProfileTemplates($profileType, $fallBackProfile = null)
+    public static function withProfileTemplates(string $profileType, string $fallBackProfile = null): self
     {
         switch ($profileType) {
             case 'monthly':
-                $instance = new static;
+                $instance = new self;
                 foreach (MonthlyProfile::fromElectricTemplates() as $key => $profile) {
                     $instance->addProfile($key, $profile, $fallBackProfile == $key);
                 }

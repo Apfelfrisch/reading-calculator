@@ -7,24 +7,30 @@ use Proengeno\ReadingCalculator\Profiles\Profile;
 
 class ReadingCalculator
 {
-    protected $profiles;
-    protected $fallbackProfile;
+    /** @var array<string, Profile> */
+    protected array $profiles = [];
 
-    public function addProfile($name, Profile $profile, $isFallback = false)
+    protected ?string $fallbackProfile = null;
+
+    public function addProfile(string $name, Profile $profile, bool $isFallback = false): void
     {
-        if ($isFallback) {
+        if ($this->fallbackProfile === null || $isFallback) {
             $this->fallbackProfile = $name;
         }
 
-        return $this->profiles[$name] = $profile;
+        $this->profiles[$name] = $profile;
     }
 
-    public function hasProfile($name): bool
+    public function hasProfile(?string $name): bool
     {
+        if ($name === null) {
+            return false;
+        }
+
         return isset($this->profiles[$name]);
     }
 
-    public function getFallbackName(): string
+    public function getFallbackName(): ?string
     {
         return $this->fallbackProfile;
     }
@@ -43,12 +49,13 @@ class ReadingCalculator
         return $yearlyUsage / $profile->yearlyFactor($until) * $profile->getPeriodeFactor($from, $until);
     }
 
-    public function getProfile($profile): Profile
+    public function getProfile(string $profile): Profile
     {
         if ($this->hasProfile($profile)) {
             return $this->profiles[$profile];
         }
         if ($this->hasProfile($this->getFallbackName())) {
+            /** @psalm-suppress PossiblyNullArrayOffset */
             return $this->profiles[$this->getFallbackName()];
         }
 

@@ -6,18 +6,20 @@ use DateTime;
 
 class HourProfile implements Profile
 {
-    public function addEntry(DateTime $start, $factor)
+    protected array $entries = [];
+
+    public function addEntry(DateTime $start, float $factor): void
     {
         $this->entries[$start->format('Y-m-d H:i')] = $factor;
     }
 
     public function getPeriodeFactor(DateTime $from, DateTime $until): float
     {
-        //
+        return 0.0;
     }
 
-    public function yearlyFactor(): float
+    public function yearlyFactor(DateTime $targetDat): float
     {
-        //
+        return 0.0;
     }
 }
