@@ -19,7 +19,7 @@ class MonthlyProfile implements Profile
     }
 
     /**
-     * @psalm-return array<string, Profile>
+     * @return array<string, Profile>
      */
     public static function fromElectricTemplates(string $path = __DIR__ . '/templates/electric/monthly/'): array
     {
@@ -32,7 +32,7 @@ class MonthlyProfile implements Profile
             if (is_file($path . $file)) {
                 /**
                  * @psalm-suppress UnresolvableInclude
-                 * @var list<array{DateTime, float}>
+                 * @psalm-var list<array{DateTime, float}>
                  */
                 $templateProfile = include($path . $file);
                 $instances[strtoupper(pathinfo($file, PATHINFO_FILENAME))] = static::fromArray($templateProfile, 'm');
@@ -43,7 +43,7 @@ class MonthlyProfile implements Profile
     }
 
     /**
-     * @param list<array{DateTime, float}> $entries
+     * @psalm-param list<array{DateTime, float}> $entries
      */
     public static function fromArray(array $entries, string $keyFormat = 'Y-m'): Profile
     {
