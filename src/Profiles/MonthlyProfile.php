@@ -3,6 +3,8 @@
 namespace Proengeno\ReadingCalculator\Profiles;
 
 use DateTime;
+use InvalidArgumentException;
+use RuntimeException;
 
 class MonthlyProfile implements Profile
 {
@@ -22,14 +24,18 @@ class MonthlyProfile implements Profile
     public static function fromElectricTemplates(string $path = __DIR__ . '/templates/electric/monthly/'): array
     {
         if (!is_dir($path)) {
-            throw new \InvalidArgumentException("Invalid path $path");
+            throw new InvalidArgumentException("Invalid path $path");
         }
 
         $instances = [];
         foreach (array_slice(scandir($path), 2) as $file) {
             if (is_file($path . $file)) {
-                /** @psalm-suppress all */
-                $instances[strtoupper(pathinfo($file, PATHINFO_FILENAME))] = static::fromArray(include($path . $file), 'm');
+                /**
+                 * @psalm-suppress UnresolvableInclude
+                 * @var list<array{DateTime, float}>
+                 */
+                $templateProfile = include($path . $file);
+                $instances[strtoupper(pathinfo($file, PATHINFO_FILENAME))] = static::fromArray($templateProfile, 'm');
             }
         }
 
@@ -85,12 +91,12 @@ class MonthlyProfile implements Profile
         if (null !== $factor = $this->entries[$date->format($this->keyFormat)] ?? null) {
             return $factor;
         }
-        throw new \Exception("No Profile Factor for " . (string)$date->format($this->keyFormat));
+
+        throw new RuntimeException("No Profile Factor for " . (string)$date->format($this->keyFormat));
     }
 
-    /** @psalm-suppress all */
     private function withinMonthFactor(DateTime $from, DateTime $until): float
     {
-        return $this->entries[$from->format($this->keyFormat)] / $from->format('t') * $from->diff($until)->days;
+        return $this->getFactor($from) / (int)$from->format('t') * $from->diff($until)->days;
     }
 }
