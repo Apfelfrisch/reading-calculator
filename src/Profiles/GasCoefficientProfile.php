@@ -35,10 +35,10 @@ class GasCoefficientProfile implements Profile
 
     public function getPeriodeFactor(DateTime $from, DateTime $until): float
     {
-        $from = (clone $from)->modify('-1 day');
+        $from = clone $from;
 
         $sumFactor = 0;
-        while ($from->modify('+1 day')->format('Ymd') < $until->format('Ymd')) {
+        while ($from->modify('+1 day')->format('Ymd') <= $until->format('Ymd')) {
             $sumFactor += $this->getFactor($from);
         }
 
