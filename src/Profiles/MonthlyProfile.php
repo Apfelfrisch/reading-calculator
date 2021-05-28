@@ -74,14 +74,14 @@ class MonthlyProfile implements Profile
         }
 
         // Angebrochener Monatsschluß
-        $sumFactor += $this->withinMonthFactor($from->modify('last day of -1 month'), $until);
+        $sumFactor += $this->withinMonthFactor($from->modify('first day of this month'), $until);
 
         return $sumFactor;
     }
 
     public function yearlyFactor(DateTime $targetDate): float
     {
-        return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year'), $targetDate);
+        return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year + 1 day'), $targetDate);
     }
 
     private function getFactor(DateTime $date): float

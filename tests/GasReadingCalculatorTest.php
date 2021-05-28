@@ -12,12 +12,12 @@ class GasReadingCalculatorTest extends TestCase
     public function it_calculates_the_yearly_usage_over_the_customer_value()
     {
         $customerValue = 81.29;
-        $targetDate = new \DateTime('2019-01-01');
+        $targetDate = new DateTime('2019-01-01');
 
         $calculator = new GasReadingCalculator;
         $calculator->addProfile('H0', $this->buildProfile($targetDate));
 
-        $calculator->getPeriodUsageFromCustomerValue('H0', new \DateTime('2018-01-01'), new \DateTime('2019-01-01'), $customerValue);
+        $calculator->getPeriodUsageFromCustomerValue('H0', new DateTime('2018-01-01'), new DateTime('2019-01-01'), $customerValue);
         $this->assertEquals(21411.0, round($calculator->getYearlyUsageFromCustomerValue('H0', $targetDate, $customerValue)));
     }
 
@@ -25,13 +25,13 @@ class GasReadingCalculatorTest extends TestCase
     public function it_calculates_the_period_usage_over_the_customer_value()
     {
         $customerValue = 81.29;
-        $from = new \DateTime('2019-01-01');
-        $until = new \DateTime('2019-03-31');
+        $from = new DateTime('2019-01-01');
+        $until = new DateTime('2019-03-31');
 
         $calculator = new GasReadingCalculator;
         $calculator->addProfile('H0', $this->buildProfile($until));
 
-        $this->assertEquals(5221.0, round($calculator->getPeriodUsageFromCustomerValue('H0', $from, $until, $customerValue)));
+        $this->assertEquals(5279.0, round($calculator->getPeriodUsageFromCustomerValue('H0', $from, $until, $customerValue)));
     }
 
     /** @test */
@@ -39,20 +39,20 @@ class GasReadingCalculatorTest extends TestCase
     {
         $usage = 500;
 
-        $from = new \DateTime('2019-01-01');
-        $until = new \DateTime('2019-06-01');
+        $from = new DateTime('2019-01-01');
+        $until = new DateTime('2019-05-31');
         $calculator = new GasReadingCalculator;
         $calculator->addProfile('H0', $this->buildProfile($until));
         $this->assertEquals(1209.0, round($calculator->getYearlyUsage('H0', $from, $until, $usage)));
 
-        $from = new \DateTime('2018-01-01');
-        $until = new \DateTime('2019-01-01');
+        $from = new DateTime('2019-01-01');
+        $until = new DateTime('2019-12-31');
         $calculator = new GasReadingCalculator;
         $calculator->addProfile('H0', $this->buildProfile($until));
         $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
 
-        $from = new \DateTime('2018-12-31');
-        $until = new \DateTime('2019-12-31');
+        $from = new DateTime('2019-01-01');
+        $until = new DateTime('2019-12-31');
         $calculator = new GasReadingCalculator;
         $calculator->addProfile('H0', $this->buildProfile($until));
         $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
@@ -70,8 +70,8 @@ class GasReadingCalculatorTest extends TestCase
         foreach (range(1, 12) as $month) {
             $usage = $calculator->getPeriodUsage(
                 'H0',
-                new DateTime("2019-$month-01"),
-                (new DateTime("2019-$month-01"))->modify('+1 month'),
+                $monathStart = new DateTime("2019-$month-01"),
+                (clone $monathStart)->modify('last day of this month'),
                 $yearlyUsage
             );
             $sumUsage += $usage;
