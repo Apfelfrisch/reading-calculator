@@ -65,8 +65,6 @@ class MonthlyProfile implements Profile
     {
         $from = clone $from;
 
-        $sumFactor = 0;
-
         // Angebrochener Monatsstart
         $sumFactor = $this->withinMonthFactor($from, (clone $from)->modify('last day of this month'));
 

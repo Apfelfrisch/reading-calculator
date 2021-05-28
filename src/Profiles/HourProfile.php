@@ -18,7 +18,7 @@ class HourProfile implements Profile
         return 0.0;
     }
 
-    public function yearlyFactor(DateTime $targetDat): float
+    public function yearlyFactor(DateTime $targetDate): float
     {
         return 0.0;
     }

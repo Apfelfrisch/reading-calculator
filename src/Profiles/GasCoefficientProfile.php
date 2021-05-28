@@ -38,7 +38,7 @@ class GasCoefficientProfile implements Profile
         $from = (clone $from)->modify('-1 day');
 
         $sumFactor = 0;
-        while ($from->modify('+1 day')->format('Ymd') <= $until->format('Ymd')) {
+        while ($from->modify('+1 day')->format('Ymd') < $until->format('Ymd')) {
             $sumFactor += $this->getFactor($from);
         }
 
