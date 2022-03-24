@@ -3,7 +3,6 @@
 namespace Proengeno\ReadingCalculator;
 
 use DateTime;
-use Proengeno\ReadingCalculator\Profiles\Profile;
 
 class GasReadingCalculator extends ReadingCalculator
 {

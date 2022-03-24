@@ -21,7 +21,23 @@ class MonthlyProfile implements Profile
     /**
      * @return array<string, Profile>
      */
-    public static function fromElectricTemplates(string $path = __DIR__ . '/templates/electric/monthly/'): array
+    public static function fromElectricTemplates(): array
+    {
+        return self::fromTemplates(__DIR__ . '/templates/electric/monthly/');
+    }
+
+    /**
+     * @return array<string, Profile>
+     */
+    public static function fromGasTemplates(): array
+    {
+        return self::fromTemplates(__DIR__ . '/templates/gas/monthly/');
+    }
+
+    /**
+     * @return array<string, Profile>
+     */
+    public static function fromTemplates(string $path): array
     {
         if (!is_dir($path)) {
             throw new InvalidArgumentException("Invalid path $path");

@@ -2,8 +2,6 @@
 
 namespace Proengeno\ReadingCalculator;
 
-use DateTime;
-use Proengeno\ReadingCalculator\Profiles\Profile;
 use Proengeno\ReadingCalculator\Profiles\MonthlyProfile;
 
 class ElectricReadingCalculator extends ReadingCalculator
