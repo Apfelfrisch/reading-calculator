@@ -35,14 +35,14 @@ class ReadingCalculator
         return $this->fallbackProfile;
     }
 
-    public function getYearlyUsage(string $profile, DateTime $from, DateTime $until, int $usage): float
+    public function getYearlyUsage(string $profile, DateTime $from, DateTime $until, int|float $usage): float
     {
         $profile = $this->getProfile($profile);
 
         return $usage / $profile->getPeriodeFactor($from, $until) * $profile->yearlyFactor($until);
     }
 
-    public function getPeriodUsage(string $profile, DateTime $from, DateTime $until, int $yearlyUsage): float
+    public function getPeriodUsage(string $profile, DateTime $from, DateTime $until, int|float $yearlyUsage): float
     {
         $profile = $this->getProfile($profile);
 
