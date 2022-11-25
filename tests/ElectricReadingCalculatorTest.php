@@ -37,7 +37,7 @@ class ElectricReadingCalculatorTest extends TestCase
         $from = new DateTime('2018-01-01');
         $until = new DateTime('2019-01-01');
 
-        $this->assertEquals(500.0, $calculator->getYearlyUsage('H0', $from, $until, $usage));
+        $this->assertEquals(500.0, round($calculator->getYearlyUsage('H0', $from, $until, $usage), 0));
 
         $from = new DateTime('2018-12-31');
         $until = new DateTime('2019-12-31');
