@@ -3,12 +3,11 @@
 namespace Proengeno\ReadingCalculator;
 
 use DateTime;
-use Proengeno\ReadingCalculator\Profiles\Profile;
 use Proengeno\ReadingCalculator\Profiles\MonthlyProfile;
 
 class GasReadingCalculator extends ReadingCalculator
 {
-    public static function withProfileTemplates(string $profileType, string $fallBackProfile = null): self
+    public static function withProfileTemplates(string $profileType, string|null $fallBackProfile = null): self
     {
         switch ($profileType) {
             case 'monthly':

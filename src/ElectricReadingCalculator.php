@@ -6,7 +6,7 @@ use Proengeno\ReadingCalculator\Profiles\MonthlyProfile;
 
 class ElectricReadingCalculator extends ReadingCalculator
 {
-    public static function withProfileTemplates(string $profileType, string $fallBackProfile = null): self
+    public static function withProfileTemplates(string $profileType, string|null $fallBackProfile = null): self
     {
         switch ($profileType) {
             case 'monthly':
