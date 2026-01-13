@@ -35,7 +35,7 @@ class GasCoefficientProfile implements Profile
 
     public function getPeriodeFactor(DateTime $from, DateTime $until): float
     {
-        $from = clone $from;
+        $from = (clone $from)->modify('-1 day');
 
         $sumFactor = 0;
         while ($from->modify('+1 day')->format('Ymd') <= $until->format('Ymd')) {
@@ -47,7 +47,7 @@ class GasCoefficientProfile implements Profile
 
     public function yearlyFactor(DateTime $targetDate): float
     {
-        return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year'), $targetDate);
+        return $this->getPeriodeFactor((clone $targetDate)->modify('-1 year +1 day'), $targetDate);
     }
 
     private function getFactor(DateTime $date): float
