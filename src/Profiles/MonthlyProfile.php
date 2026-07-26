@@ -79,18 +79,25 @@ class MonthlyProfile implements Profile
 
     public function getPeriodeFactor(DateTime $from, DateTime $until): float
     {
+        if ($from->format('Y-m') === $until->format('Y-m')) {
+            return $this->withinMonthFactor($from, $until);
+        }
+
         $from = clone $from;
 
         // Angebrochener Monatsstart
-        $sumFactor = $this->withinMonthFactor($from, (clone $from)->modify('last day of this month'));
+        $sumFactor = $this->getFactor($from) / (int)$from->format('t') * ((int)$from->format('t') - (int)$from->format('j') + 1);
 
         // Volle Zwischenmonate
-        while ($from->modify('last day of +1 month') <= $until) {
+        while ($from->modify('last day of +1 month')->format('Y-m') !== $until->format('Y-m')) {
             $sumFactor += $this->getFactor($from);
         }
 
-        // Angebrochener Monatsschluß
-        $sumFactor += $this->withinMonthFactor($from->modify('last day of -1 month'), $until);
+        // Angebrochener Monatsschluß, endet die Periode am Monatsersten entfällt er
+        $untilDays = (int)$until->format('j') - 1;
+        if ($untilDays > 0) {
+            $sumFactor += $this->getFactor($until) / (int)$until->format('t') * $untilDays;
+        }
 
         return $sumFactor;
     }
