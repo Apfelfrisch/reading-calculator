@@ -79,27 +79,27 @@ class MonthlyProfile implements Profile
 
     public function getPeriodeFactor(DateTime $from, DateTime $until): float
     {
+        if ($from >= $until) {
+            return 0.0;
+        }
+
         if ($from->format('Y-m') === $until->format('Y-m')) {
-            return $this->withinMonthFactor($from, $until);
+            return $this->partialMonthFactor($from, $from->diff($until)->days);
         }
 
         $from = clone $from;
+        $untilMonth = $until->format('Y-m');
 
         // Angebrochener Monatsstart
-        $sumFactor = $this->getFactor($from) / (int)$from->format('t') * ((int)$from->format('t') - (int)$from->format('j') + 1);
+        $sumFactor = $this->partialMonthFactor($from, (int)$from->format('t') - (int)$from->format('j') + 1);
 
         // Volle Zwischenmonate
-        while ($from->modify('last day of +1 month')->format('Y-m') !== $until->format('Y-m')) {
+        while ($from->modify('last day of +1 month')->format('Y-m') !== $untilMonth) {
             $sumFactor += $this->getFactor($from);
         }
 
         // Angebrochener Monatsschluß, endet die Periode am Monatsersten entfällt er
-        $untilDays = (int)$until->format('j') - 1;
-        if ($untilDays > 0) {
-            $sumFactor += $this->getFactor($until) / (int)$until->format('t') * $untilDays;
-        }
-
-        return $sumFactor;
+        return $sumFactor + $this->partialMonthFactor($until, (int)$until->format('j') - 1);
     }
 
     public function yearlyFactor(DateTime $targetDate): float
@@ -116,8 +116,12 @@ class MonthlyProfile implements Profile
         throw new RuntimeException("No Profile Factor for " . (string)$date->format($this->keyFormat));
     }
 
-    private function withinMonthFactor(DateTime $from, DateTime $until): float
+    private function partialMonthFactor(DateTime $month, int $days): float
     {
-        return $this->getFactor($from) / (int)$from->format('t') * $from->diff($until)->days;
+        if ($days <= 0) {
+            return 0.0;
+        }
+
+        return $this->getFactor($month) / (int)$month->format('t') * $days;
     }
 }
